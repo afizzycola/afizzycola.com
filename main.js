@@ -13,7 +13,7 @@ import spaceImg from './assets/space.jpg'
 
 const canvas = document.getElementById('bg')
 const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 2000 );
+const camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 2000 );
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas
 });
@@ -28,8 +28,8 @@ renderer.render( scene, camera );
 const loader = new FontLoader();
 let graphicalBlocks = []
 loader.load( fontJson, (font) =>{
-  let x = -15;
-  blocksList.reverse().forEach(block => {
+  let x = -16;
+  blocksList.forEach(block => {
     const graphicalBlock = new Block(scene, { 
       x: x, 
       title: block.title, 
@@ -42,9 +42,7 @@ loader.load( fontJson, (font) =>{
   })
 
   const header = new Label("afizzycola", font, 5)
-  header.position.z = -3
-  header.position.y = 6.25
-  header.position.x = -20
+  header.position.set(-22, 6.25, -3)
   scene.add(header)
 
   //donate code START
@@ -80,9 +78,10 @@ const btcMat = new THREE.MeshBasicMaterial( {
   side: THREE.DoubleSide
 });
 const btc = new THREE.Mesh( btcGeo, btcMat );
-btc.position.z = 0
+btc.position.z = -15
 btc.position.y = 30
 btc.position.x = 30
+btc.userData.URL = "https://bitcoin.org"
 //btc.rotateY(Math.PI * 1.75)
 //btc.rotateZ(-Math.PI * 1)
 //btc.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI * 1.75)
@@ -96,7 +95,7 @@ const twitterMat = new THREE.MeshBasicMaterial( {
 const twitter = new THREE.Mesh( twitterGeo, twitterMat );
 twitter.position.z = -3
 twitter.position.y = 10
-twitter.position.x = 15
+twitter.position.x = 13
 twitter.userData.URL = "https://twitter.com/afizzycola"
 
 const githubGeo = new THREE.CircleGeometry( 1, 35);
@@ -106,7 +105,7 @@ const githubMat = new THREE.MeshBasicMaterial( {
 const github = new THREE.Mesh( githubGeo, githubMat );
 github.position.z = -3
 github.position.y = 7
-github.position.x = 15
+github.position.x = 13
 github.userData.URL = "https://github.com/afizzycola"
 
 scene.add(twitter, github)
