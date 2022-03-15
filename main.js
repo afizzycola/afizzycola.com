@@ -2,277 +2,218 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
-import axios from 'axios'
+import blocksList from './blockslist.js'
+import { Block, Label } from './classes.js'
 
+
+const canvas = document.getElementById('bg')
 const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 2000 );
+const camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 2000 );
 const renderer = new THREE.WebGLRenderer({
-  canvas: document.getElementById('bg')
+  canvas: canvas
 });
 
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
-camera.position.z = 17;
-camera.position.y = 10;
-camera.position.x = -24;
+
+
+camera.updateProjectionMatrix()
 
 renderer.render( scene, camera );
-
-async function getBlocks (fromHeight, toHeight) {
-  const lineItemAPI = axios.create({
-      baseURL: "https://d89qxc58eb.execute-api.eu-west-2.amazonaws.com/test",
-      headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': "E9qqUWRIK384dIXNqE7N14sBPLSqtFQk5imrY18W"
-      }
-  });
-
-  let response
-  try {
-    response = await lineItemAPI.get(`/line-items/block-height?from=${fromHeight}&to=${toHeight}`)
-    const txList = response.data.Items
-    let blocks = []
-    for (let i = fromHeight; i <= toHeight; i++) {
-      let txsInBlock = txList.filter(tx => tx.blockHeight === i)
-      let block = {
-        blockHeight: i,
-      }
-      if (txsInBlock.length > 0) {
-        block.blockTime = txsInBlock[0].blockTime
-        txsInBlock.forEach(tx => {
-          delete tx.blockTime
-          delete tx.blockHeight
-        })
-        block.txs = txsInBlock
-      }
-      blocks.push(block)
-    }
-    return blocks
-  } catch (error) {
-    throw Error(error)
-  }
-
-}
-
-let blocksList
-getBlocks(2189078, 2189878)
-  .then(blocks => {
-    //console.log(blocks)
-    blocksList = blocks
-  })
-  .catch(error => {
-    console.log(error)
-  })
-
-
-// blocksList = [
-//   {
-//     txId: "afeffb914876ee83b923d3c1552a60278a2e9b30a3d2da6c2bc581541b2bbf8d",
-//     blockHeight: 702585,
-//     blockTime: "2021-09-28 15:34",
-//     messages: [
-//       "Jess and Sam cut the cake",
-//       "many happy returns"
-//     ]
-//   },
-//   {
-//     txId: "cfeffb914876ee83b923d3c1552a60278a2e9b30a3d2da6c2bc581541b2bbf8d",
-//     blockHeight: 702587,
-//     blockTime: "2021-09-28 15:16",
-//     messages: ["Jess and Sam married!!"],
-//   },
-//   {
-//     txId: "c3552a60276ee83b923d3c1552a60278a2e9b30a3d2da6c2bc581541b2bbf8d",
-//     blockHeight: 702587,
-//     blockTime: "2021-09-28 15:16",
-//     messages: ["Where they?"],
-//   }
-// ]
-
+// camera.position.x =  30
+// camera.position.y = -0.71
+// camera.position.z = 22.45
+// camera.rotateX(-0.013244205341120922)
+// camera.rotateY(0.5046228629284277)
+// camera.rotateZ(0.006403560132231008)
+// camera.updateProjectionMatrix()
 const loader = new FontLoader();
-loader.load( 'assets/helvetiker_regular.typeface.json', function (font) {
-  setTimeout(() => {
-    let x = -40;
-    blocksList.reverse().forEach(block => {
-      new Block(scene, { 
+let graphicalBlocks = []
+loader.load( 'assets/helvetiker_regular.typeface.json', (font) =>{
+  let x = -15;
+  blocksList.reverse().forEach(block => {
+    const graphicalBlock = new Block(scene, { 
+      x: x, 
         x: x, 
-        blockHeight: block.blockHeight.toString(), 
-        blockTime: block.blockTime 
-      }, {font: font}, block.txs)
-      x += 10
-    })
-    
-  }, 1000)
+      x: x, 
+        x: x, 
+      x: x, 
+      title: block.title, 
+      blockTime: block.blockTime,
+      titleX: block.titleX,
+      url: block.url
+    }, {font: font}, block.txs)
+    graphicalBlocks.push(graphicalBlock.cube)
+    x += 12
+  })
+
+  const header = new Label("afizzycola", font, 5)
+  header.position.z = -3
+  header.position.y = 6.25
+  header.position.x = -20
+  scene.add(header)
+
+  //donate code START
+  // const donate = new Label("Donate:", font, 1)
+  // donate.position.z = -3
+  // donate.position.y = -6.25
+  // donate.position.x = -6
+  // scene.add(donate)
+  //donate code END
   
 })
 
-// qr code code START
+//qr code code START
 
-// const qrGeo = new THREE.PlaneGeometry( 3.5, 3.5, 3.5 );
+// const qrGeo = new THREE.PlaneGeometry( 6, 6, 6 );
 // const qrMat = new THREE.MeshBasicMaterial( {
 //   map: new THREE.TextureLoader().load( 'assets/qr-code.png' ),
 //   side: THREE.DoubleSide
 // });
 // const qr = new THREE.Mesh( qrGeo, qrMat );
 // qr.position.z = -3
-// qr.position.y = 6.25
-// qr.position.x = -3.1
-// qr.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI * 1.75)
+// qr.position.y = -6.25
+// qr.position.x = 10
+// //qr.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI * 1.75)
+
 // scene.add(qr)
 
-// END
+//END
 
-const btcGeo = new THREE.CircleGeometry( 5, 35);
+const btcGeo = new THREE.CircleGeometry( 2, 35);
 const btcMat = new THREE.MeshBasicMaterial( {
   map: new THREE.TextureLoader().load( 'assets/bitcoin.png' ),
+  side: THREE.DoubleSide
 });
 const btc = new THREE.Mesh( btcGeo, btcMat );
-btc.position.z = -20
-btc.position.y = 90
+btc.position.z = 0
+btc.position.y = 30
 btc.position.x = 30
-btc.rotateY(Math.PI * 1.75)
-btc.rotateX(Math.PI * 2.5)
+//btc.rotateY(Math.PI * 1.75)
+//btc.rotateZ(-Math.PI * 1)
 //btc.rotateOnAxis(new THREE.Vector3(0, 0, 1), Math.PI * 1.75)
 scene.add(btc)
 
+// logos
+const twitterGeo = new THREE.CircleGeometry( 1, 35);
+const twitterMat = new THREE.MeshBasicMaterial( {
+  map: new THREE.TextureLoader().load( 'assets/twitter.png' ),
+});
+const twitter = new THREE.Mesh( twitterGeo, twitterMat );
+twitter.position.z = -3
+twitter.position.y = 10
+twitter.position.x = 15
+twitter.userData.URL = "https://twitter.com/afizzycola"
 
-function addWeddingCake(numberOfLayers) {
-  let radius = 2
-  let height = 1
-  let y = 3
-  const icingTexture = new THREE.TextureLoader().load( './assets/icing.jpg' );
-  for (let i = 0; i < numberOfLayers; i++) {
-    const cakeGeo = new THREE.CylinderGeometry( radius, radius, height, 32 );
-    const cakeMat = new THREE.MeshStandardMaterial( { 
-      map: icingTexture 
-    });
-    const cake = new THREE.Mesh( cakeGeo, cakeMat );
-    cake.position.y = y
-    scene.add(cake)
-    radius *= 0.75
-    height *= 0.9
-    y += height
-  }
-}
+const githubGeo = new THREE.CircleGeometry( 1, 35);
+const githubMat = new THREE.MeshBasicMaterial( {
+  map: new THREE.TextureLoader().load( 'assets/github.png' ),
+});
+const github = new THREE.Mesh( githubGeo, githubMat );
+github.position.z = -3
+github.position.y = 7
+github.position.x = 15
+github.userData.URL = "https://github.com/afizzycola"
+
+scene.add(twitter, github)
 
 
-
+// light related
 const pointLight = new THREE.PointLight( 0xffffff);
 pointLight.position.set( 5, 20, 5 );
-
 const ambientLight = new THREE.AmbientLight( 0xffffff);
-
-
 scene.add( pointLight, ambientLight );
 
-const lightHelper = new THREE.PointLightHelper( pointLight);
-//const gridHelper = new THREE.GridHelper( 200, 50 );
+// const lightHelper = new THREE.PointLightHelper( pointLight);
+// //const gridHelper = new THREE.GridHelper( 200, 50 );
 
+// scene.add( 
+//   lightHelper, 
+//   //gridHelper 
+// );
 
-scene.add( 
-  lightHelper, 
-  //gridHelper 
-);
-
-const controls = new OrbitControls( camera, renderer.domElement );
+//const controls = new OrbitControls( camera, renderer.domElement );
+camera.position.set(-4.534807074265601, 4.427075622197015, 38.730175153425655)
+//camera.rotation.set(-0.19292300791821854, 0.7771303204248036, 0.13614103141629327)
 
 const spaceTexture = new THREE.TextureLoader().load( './assets/space.jpg' );
 scene.background = spaceTexture;
 
 function animate() {
   requestAnimationFrame( animate );
-  //cake.rotation.x += 0.001;
-  //cake.rotation.y += 0.005;
-
-  controls.update();
+  rotateAboutPoint(btc, new THREE.Vector3(0, 0, -100 / 2), new THREE.Vector3(1, 1, 0).normalize(), Math.PI * 0.0005, true)
+  stars.forEach(star => rotateAboutPoint(star, new THREE.Vector3(0, 0, -20 / 2), new THREE.Vector3(1, 1, 0).normalize(), Math.PI * 0.0005, true))
+  //controls.update();
+ //console.log(camera.position, console.log(camera.rotation))
 
   renderer.render( scene, camera );
 }
 
-function addStar() {
+function createStar() {
   const geometry = new THREE.SphereGeometry(0.25, 24, 24 );
   const material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
   const star = new THREE.Mesh( geometry, material );
   const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100))
   star.position.set(x, y, z)
-  scene.add( star );
+  return star
 }
 
+function rotateAboutPoint(obj, point, axis, theta, pointIsWorld){
+  pointIsWorld = (pointIsWorld === undefined)? false : pointIsWorld;
 
-Array(200).fill().forEach(addStar)
+  if(pointIsWorld){
+      obj.parent.localToWorld(obj.position); // compensate for world coordinate
+  }
+
+  obj.position.sub(point); // remove the offset
+  obj.position.applyAxisAngle(axis, theta); // rotate the POSITION
+  obj.position.add(point); // re-add the offset
+
+  if(pointIsWorld){
+      obj.parent.worldToLocal(obj.position); // undo world coordinates compensation
+  }
+
+  //obj.rotateOnAxis(axis, theta); // rotate the OBJECT
+}
+
+let stars = []
+Array(200).fill().forEach(() => {
+  const star = createStar()
+  scene.add( star );
+  stars.push(star)
+})
+
+
+
+const mouseVector = new THREE.Vector3()
+const raycaster = new THREE.Raycaster()
+window.addEventListener( 'mousedown', goToUrl, false );
+window.addEventListener( 'mousemove', toggleHandPicker, false );
 animate()
 
 
-
-class Block {
-  constructor (scene, blockDetail, config, txs = []){
-      console.log("blockDetail", blockDetail)
-      const {x, blockHeight} = blockDetail
-      const {font} = config
-      this.cube = new Cube()
-      this.cube.position.set(x, 0, 0)
-
-      this.blockHeight = new Label(blockHeight, font, 0.8, 1)
-      this.blockHeight.position.set(x - 2.4, 0, 1.55)
-
-      scene.add(this.cube, this.blockHeight)
-      console.log(blockDetail)
-      if (txs.length > 0) {
-        const {blockTime} = blockDetail
-        console.log(blockTime)
-        this.blockTime = new Label(`------------------------ ${blockTime} ---------------------------------------------------`, font, 0.5)
-
-        this.txIds = []
-        this.messages = []
-        let y = 4.25;
-        txs.reverse().forEach(tx => {
-          const txLabel = new Label(tx.txId, font, 0.3)
-          txLabel.position.set(x + 0.1, y, 2)
-          txLabel.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI * 1.75)
-          this.txIds.push(txLabel)
-          y += 0.75
-          tx.messages.reverse().forEach(message => {
-            const messageLabel = new Label(message, font, 0.3)
-            messageLabel.position.set(x, y, 2)
-            messageLabel.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI * 1.75)
-            this.messages.push(messageLabel)
-            y += 1
-          })
-          y += 1
-        })
-
-        this.blockTime.position.set(x + 0.1, -3, 0.1)
-        this.blockTime.rotateY(Math.PI * 1.5)
-        this.blockTime.rotateX(Math.PI * 1.5)
-
-        scene.add(this.txId, this.blockTime, ...this.txIds, ...this.messages)
-      }
+function goToUrl(event) {
+  event.preventDefault();
+  mouseVector.x = (event.clientX / window.innerWidth) * 2 - 1, 
+  mouseVector.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouseVector, camera);
+  console.log(graphicalBlocks)
+  var intersects = raycaster.intersectObjects(scene.children);
+  console.log(intersects)
+  if (intersects.length > 0) {
+      window.open(intersects[0].object.userData.URL);
   }
 }
 
-class Cube extends THREE.Mesh {
-  constructor (){
-      const  geometry = new THREE.BoxGeometry( 5, 5, 5, 32 )
-      const material = new THREE.MeshStandardMaterial( { 
-          color: 0x2d3348,
-      });
-      super(geometry, material)
-  }
-}
-
-class Label extends THREE.Mesh  {
-  constructor (text, font, fontSize, fontHeight = 0){
-      const  geometry = new TextGeometry(text, {
-          font: font,
-          size: fontSize,
-          height: fontHeight,
-          curveSegments: 12,
-          bevelEnabled: false,
-      })
-      const material = new THREE.MeshStandardMaterial({ 
-          color: 0xffffff, 
-      })
-      super(geometry, material)
+function toggleHandPicker(event) {
+  event.preventDefault();
+  mouseVector.x = (event.clientX / window.innerWidth) * 2 - 1, 
+  mouseVector.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouseVector, camera);
+  var intersects = raycaster.intersectObjects(scene.children);
+  if (intersects.length > 0) {
+    canvas.style.cursor = "pointer"
+  } else {
+    canvas.style.cursor = "auto"
   }
 }
