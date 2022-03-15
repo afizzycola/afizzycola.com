@@ -4,6 +4,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import blocksList from './blockslist.js'
 import { Block, Label } from './classes.js'
+import fontJson from './assets/helvetiker_regular.typeface.json?url'
+import bitcoinImg from './assets/bitcoin.png'
+import twitterImg from './assets/twitter.png'
+import githubImg from './assets/github.png'
+import spaceImg from './assets/space.jpg'
 
 
 const canvas = document.getElementById('bg')
@@ -20,23 +25,12 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 camera.updateProjectionMatrix()
 
 renderer.render( scene, camera );
-// camera.position.x =  30
-// camera.position.y = -0.71
-// camera.position.z = 22.45
-// camera.rotateX(-0.013244205341120922)
-// camera.rotateY(0.5046228629284277)
-// camera.rotateZ(0.006403560132231008)
-// camera.updateProjectionMatrix()
 const loader = new FontLoader();
 let graphicalBlocks = []
-loader.load( 'assets/helvetiker_regular.typeface.json', (font) =>{
+loader.load( fontJson, (font) =>{
   let x = -15;
   blocksList.reverse().forEach(block => {
     const graphicalBlock = new Block(scene, { 
-      x: x, 
-        x: x, 
-      x: x, 
-        x: x, 
       x: x, 
       title: block.title, 
       blockTime: block.blockTime,
@@ -82,7 +76,7 @@ loader.load( 'assets/helvetiker_regular.typeface.json', (font) =>{
 
 const btcGeo = new THREE.CircleGeometry( 2, 35);
 const btcMat = new THREE.MeshBasicMaterial( {
-  map: new THREE.TextureLoader().load( 'assets/bitcoin.png' ),
+  map: new THREE.TextureLoader().load(bitcoinImg),
   side: THREE.DoubleSide
 });
 const btc = new THREE.Mesh( btcGeo, btcMat );
@@ -97,7 +91,7 @@ scene.add(btc)
 // logos
 const twitterGeo = new THREE.CircleGeometry( 1, 35);
 const twitterMat = new THREE.MeshBasicMaterial( {
-  map: new THREE.TextureLoader().load( 'assets/twitter.png' ),
+  map: new THREE.TextureLoader().load(twitterImg),
 });
 const twitter = new THREE.Mesh( twitterGeo, twitterMat );
 twitter.position.z = -3
@@ -107,7 +101,7 @@ twitter.userData.URL = "https://twitter.com/afizzycola"
 
 const githubGeo = new THREE.CircleGeometry( 1, 35);
 const githubMat = new THREE.MeshBasicMaterial( {
-  map: new THREE.TextureLoader().load( 'assets/github.png' ),
+  map: new THREE.TextureLoader().load(githubImg),
 });
 const github = new THREE.Mesh( githubGeo, githubMat );
 github.position.z = -3
@@ -134,17 +128,14 @@ scene.add( pointLight, ambientLight );
 
 //const controls = new OrbitControls( camera, renderer.domElement );
 camera.position.set(-4.534807074265601, 4.427075622197015, 38.730175153425655)
-//camera.rotation.set(-0.19292300791821854, 0.7771303204248036, 0.13614103141629327)
 
-const spaceTexture = new THREE.TextureLoader().load( './assets/space.jpg' );
+const spaceTexture = new THREE.TextureLoader().load(spaceImg);
 scene.background = spaceTexture;
 
 function animate() {
   requestAnimationFrame( animate );
   rotateAboutPoint(btc, new THREE.Vector3(0, 0, -100 / 2), new THREE.Vector3(1, 1, 0).normalize(), Math.PI * 0.0005, true)
   stars.forEach(star => rotateAboutPoint(star, new THREE.Vector3(0, 0, -20 / 2), new THREE.Vector3(1, 1, 0).normalize(), Math.PI * 0.0005, true))
-  //controls.update();
- //console.log(camera.position, console.log(camera.rotation))
 
   renderer.render( scene, camera );
 }
@@ -211,7 +202,7 @@ function toggleHandPicker(event) {
   mouseVector.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouseVector, camera);
   var intersects = raycaster.intersectObjects(scene.children);
-  if (intersects.length > 0) {
+  if (intersects.length > 0 && intersects[0].object.userData.URL) {
     canvas.style.cursor = "pointer"
   } else {
     canvas.style.cursor = "auto"
