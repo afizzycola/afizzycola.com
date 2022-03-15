@@ -78,8 +78,8 @@ const btcMat = new THREE.MeshBasicMaterial( {
   side: THREE.DoubleSide
 });
 const btc = new THREE.Mesh( btcGeo, btcMat );
-btc.position.z = -15
-btc.position.y = 30
+btc.position.z = -50
+btc.position.y = 20
 btc.position.x = 30
 btc.userData.URL = "https://bitcoin.org"
 //btc.rotateY(Math.PI * 1.75)
@@ -133,7 +133,7 @@ scene.background = spaceTexture;
 
 function animate() {
   requestAnimationFrame( animate );
-  rotateAboutPoint(btc, new THREE.Vector3(0, 0, -100 / 2), new THREE.Vector3(1, 1, 0).normalize(), Math.PI * 0.0005, true)
+  rotateAboutPoint(btc, new THREE.Vector3(0, 0, -30 / 2), new THREE.Vector3(1, 1, 0).normalize(), Math.PI * 0.0005, true)
   stars.forEach(star => rotateAboutPoint(star, new THREE.Vector3(0, 0, -20 / 2), new THREE.Vector3(1, 1, 0).normalize(), Math.PI * 0.0005, true))
 
   renderer.render( scene, camera );
