@@ -29,21 +29,29 @@ const loader = new FontLoader();
 let graphicalBlocks = []
 loader.load( fontJson, (font) =>{
   let x = -16;
+  let y = 0;
   blocksList.forEach(block => {
     const graphicalBlock = new Block(scene, { 
-      x: x, 
+      x: x,
+      y: y,
+      description: block.description,
       title: block.title, 
       blockTime: block.blockTime,
       titleX: block.titleX,
       url: block.url
     }, {font: font}, block.txs)
     graphicalBlocks.push(graphicalBlock.cube)
-    x += 12
+    //x += 12
+    y += -6
   })
 
   const header = new Label("afizzycola", font, 5)
   header.position.set(-22, 6.25, -3)
   scene.add(header)
+
+  const projects = new Label("my projects:", font, 1)
+  projects.position.set(-22, 3.3, -3)
+  scene.add(projects)
 
   //donate code START
   // const donate = new Label("Donate:", font, 1)
