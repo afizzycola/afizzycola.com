@@ -1,14 +1,12 @@
-# 3D Blockexplorer
+# afizzycola.com
 
-3D Blockexplorer Prototype built in three.js
+My personal [website](https://afizzycola.com) built in three.js
 
 ## Installation
 
 ```
 npm install
 ```
-## Set Env Vars
-Including ```AWSAPIDOMAIN``` and ```AWSPRODAPIKEY```
 ## Run
 ```
 npm run dev
