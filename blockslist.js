@@ -24,7 +24,7 @@ export default [
       blockTime: "",
       url: "bitcoinstorage.live",
       description: [
-        "Up-to-date information about the storage",
+        "Up-to-the-'block' information about the storage",
         "requirements of running a Bitcoin node.",
       ],
       txs: [ 
