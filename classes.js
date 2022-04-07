@@ -11,6 +11,16 @@ export class Cube extends THREE.Mesh {
         super(geometry, material)
     }
 }
+
+export class DescriptionCube extends THREE.Mesh {
+    constructor (){
+        const  geometry = new THREE.BoxGeometry( 20, 5, 5, 32 )
+        const material = new THREE.MeshStandardMaterial( { 
+            color: 0x2d3348,
+        });
+        super(geometry, material)
+    }
+}
   
 export class Label extends THREE.Mesh  {
     constructor (text, font, fontSize, fontHeight = 0){
@@ -31,19 +41,35 @@ export class Label extends THREE.Mesh  {
 
 export class Block {
     constructor (scene, blockDetail, config, txs = []){
-        const {x, title, url, titleX} = blockDetail
+        const {x, y, title, url, titleX, description} = blockDetail
         const {font} = config
-        this.cube = new Cube()
-        this.cube.position.set(x, 0, 0)
-        this.cube.userData = {
+        this.titleCube = new Cube()
+        this.titleCube.position.set(x, y, 0)
+        this.titleCube.userData = {
+            URL: url,
+        }
+        this.descCube = new DescriptionCube()
+        this.descCube.position.set(x + 17, y, 0)
+        this.descCube.userData = {
             URL: url,
         }
   
         this.title = new Label(title, font, 0.8, 1)
         console.log(this.title)
-        this.title.position.set(x + titleX, 0, 1.55)
+        this.title.position.set(x + titleX, y, 1.55)
+        this.descriptions = []
+        let yAdjust = 1
+        description.forEach((descrip) => {
+            const descripTitle = new Label(descrip, font, 0.65, 1)
+            descripTitle.position.set(x + 17 -9.5, y + yAdjust, 1.55)
+            this.descriptions.push(descripTitle)
+            yAdjust += -1
+        })
   
-        scene.add(this.cube, this.title)
+        scene.add(this.titleCube, this.descCube, this.title)
+        this.descriptions.forEach(descripTitle => {
+            scene.add(descripTitle)
+        })
         if (txs.length > 0) {
           const {blockTime} = blockDetail
           this.blockTime = new Label(``, font, 0.5)
