@@ -22,7 +22,7 @@ export default [
       title: "bitcoinstorage.live",
       titleX: -4.2,
       blockTime: "",
-      url: "bitcoinstorage.live",
+      url: "https://bitcoinstorage.live/",
       description: [
         "Up-to-the-'block' information about the storage",
         "requirements of running a Bitcoin node.",
